@@ -9,7 +9,7 @@ $conn = new mysqli($servername, $username, $password, $dbname);
 
 // Verifica a conexão
 if ($conn->connect_error) {
-    die("Conexão falhou: " . $conn->connect_error);
+    die(json_encode(['message' => 'Conexão falhou: ' . $conn->connect_error]));
 }
 
 // Configuração do cabeçalho para JSON
