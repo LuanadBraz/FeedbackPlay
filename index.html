@@ -1,177 +1,22 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Feedback de Clientes Playbonds</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <style>
-        /* Reset básico de estilo */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f4f7fc;
-            color: #333;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-
-        .container {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            max-width: 800px;
-            width: 100%;
-        }
-
-        h1 {
-            font-size: 24px;
-            font-weight: 600;
-            margin-bottom: 20px;
-            text-align: center;
-            color: #2C3E50;
-        }
-
-        form {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        label {
-            font-weight: 600;
-            color: #2C3E50;
-        }
-
-        input,
-        select,
-        textarea {
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 14px;
-            color: #333;
-            outline: none;
-            transition: border-color 0.3s;
-        }
-
-        input:focus,
-        select:focus,
-        textarea:focus {
-            border-color: #3498db;
-        }
-
-        textarea {
-            resize: vertical;
-            min-height: 120px;
-        }
-
-        button {
-            background-color: #3498db;
-            color: #fff;
-            padding: 12px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s;
-        }
-
-        button:hover {
-            background-color: #2980b9;
-        }
-
-        .btn-download {
-            background-color: #2ecc71;
-            margin-top: 20px;
-            width: 100%;
-            display: block;
-        }
-
-        .btn-download:hover {
-            background-color: #27ae60;
-        }
-
-        table {
-            width: 100%;
-            margin-top: 30px;
-            border-collapse: collapse;
-            background-color: #fff;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-
-        th,
-        td {
-            padding: 12px;
-            text-align: left;
-            border: 1px solid #ddd;
-        }
-
-        th {
-            background-color: #f7f7f7;
-            color: #333;
-            font-weight: 600;
-        }
-
-        .actions button {
-            background-color: #e74c3c;
-            color: #fff;
-            border: none;
-            padding: 6px 12px;
-            font-size: 14px;
-            cursor: pointer;
-            border-radius: 4px;
-            transition: background-color 0.3s;
-        }
-
-        .actions button:hover {
-            background-color: #c0392b;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 15px;
-            }
-
-            h1 {
-                font-size: 20px;
-            }
-
-            table th,
-            table td {
-                font-size: 12px;
-                padding: 8px;
-            }
-
-            button {
-                font-size: 14px;
-                padding: 10px;
-            }
-
-            .btn-download {
-                font-size: 14px;
-            }
-        }
+        /* Adicione os estilos que preferir */
+        body { font-family: Arial, sans-serif; background: #f4f4f4; padding: 20px; }
+        form { background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); }
+        input, select, textarea { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 4px; }
+        button { background-color: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background-color: #45a049; }
     </style>
 </head>
-
 <body>
 
     <div class="container">
         <h1>Feedback de Clientes Playbonds</h1>
-
-        <!-- Mensagem de sucesso/erro -->
-        <div id="message" style="display: none; padding: 10px; margin-bottom: 20px; border-radius: 4px; text-align: center;"></div>
 
         <form id="feedback-form">
             <label for="username">Nome de Usuário:</label>
@@ -204,8 +49,6 @@
             <button type="submit">Adicionar Feedback</button>
         </form>
 
-        <button id="download-btn" class="btn-download">Baixar Feedbacks em XLS</button>
-
         <table id="feedback-table">
             <thead>
                 <tr>
@@ -214,7 +57,6 @@
                     <th>Nível</th>
                     <th>Área</th>
                     <th>Feedback</th>
-                    <th>Ações</th>
                 </tr>
             </thead>
             <tbody></tbody>
@@ -222,6 +64,29 @@
     </div>
 
     <script>
+        document.getElementById('feedback-form').addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const username = document.getElementById('username').value;
+            const level = document.getElementById('level').value;
+            const area = document.getElementById('area').value;
+            const feedback = document.getElementById('feedback').value;
+
+            const feedbackData = { username, level, area, feedback };
+
+            const response = await fetch('feedbacks.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(feedbackData)
+            });
+
+            const result = await response.json();
+            alert(result.message); // Exibe a mensagem de sucesso ou erro
+
+            // Recarrega a lista de feedbacks
+            loadFeedbacks();
+        });
+
         // Função para carregar feedbacks do servidor
         async function loadFeedbacks() {
             const response = await fetch('feedbacks.php');
@@ -237,69 +102,14 @@
                     <td>${feedback.level}</td>
                     <td>${feedback.area}</td>
                     <td>${feedback.feedback}</td>
-                    <td class="actions">
-                        <button class="edit-btn" onclick="editFeedback(${feedback.id})">Editar</button>
-                        <button class="delete-btn" onclick="deleteFeedback(${feedback.id})">Excluir</button>
-                    </td>
                 `;
                 tbody.appendChild(row);
             });
         }
-
-        // Função para adicionar feedback ao servidor
-        document.getElementById('feedback-form').addEventListener('submit', async function (event) {
-            event.preventDefault();
-
-            const username = document.getElementById('username').value;
-            const level = document.getElementById('level').value;
-            const area = document.getElementById('area').value;
-            const feedback = document.getElementById('feedback').value;
-
-            const feedbackData = {
-                username,
-                level,
-                area,
-                feedback
-            };
-
-            try {
-                const response = await fetch('feedbacks.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(feedbackData)
-                });
-
-                const result = await response.json();
-
-                const messageDiv = document.getElementById('message');
-                if (response.ok) {
-                    messageDiv.style.backgroundColor = '#2ecc71';
-                    messageDiv.style.color = '#fff';
-                    messageDiv.innerText = result.message || 'Feedback adicionado com sucesso!';
-                } else {
-                    messageDiv.style.backgroundColor = '#e74c3c';
-                    messageDiv.style.color = '#fff';
-                    messageDiv.innerText = result.message || 'Erro ao adicionar feedback!';
-                }
-
-                messageDiv.style.display = 'block';
-                loadFeedbacks();  // Carregar feedbacks após o envio
-                document.getElementById('feedback-form').reset();
-            } catch (error) {
-                const messageDiv = document.getElementById('message');
-                messageDiv.style.backgroundColor = '#e74c3c';
-                messageDiv.style.color = '#fff';
-                messageDiv.innerText = 'Erro ao se comunicar com o servidor!';
-                messageDiv.style.display = 'block';
-            }
-        });
 
         // Carregar feedbacks ao iniciar
         window.onload = loadFeedbacks;
     </script>
 
 </body>
-
 </html>
