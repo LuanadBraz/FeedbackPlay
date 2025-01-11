@@ -1,5 +1,5 @@
 <?php
-$servername = "localhost"; // Endereço do servidor (localhost para servidores locais)
+$servername = "http://localhost/feedbacks.html"; // Endereço do servidor (localhost para servidores locais)
 $username = "root"; // Usuário do banco de dados
 $password = "1864"; // Senha do banco de dados (geralmente vazia em localhost)
 $dbname = "feedback_db"; // Nome do banco de dados
