@@ -170,6 +170,9 @@
     <div class="container">
         <h1>Feedback de Clientes Playbonds</h1>
 
+        <!-- Mensagem de sucesso/erro -->
+        <div id="message" style="display: none; padding: 10px; margin-bottom: 20px; border-radius: 4px; text-align: center;"></div>
+
         <form id="feedback-form">
             <label for="username">Nome de Usuário:</label>
             <input type="text" id="username" name="username" required placeholder="Digite o nome do usuário">
@@ -259,17 +262,37 @@
                 feedback
             };
 
-            const response = await fetch('feedbacks.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(feedbackData)
-            });
+            try {
+                const response = await fetch('feedbacks.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(feedbackData)
+                });
 
-            if (response.ok) {
-                loadFeedbacks();
+                const result = await response.json();
+
+                const messageDiv = document.getElementById('message');
+                if (response.ok) {
+                    messageDiv.style.backgroundColor = '#2ecc71';
+                    messageDiv.style.color = '#fff';
+                    messageDiv.innerText = result.message || 'Feedback adicionado com sucesso!';
+                } else {
+                    messageDiv.style.backgroundColor = '#e74c3c';
+                    messageDiv.style.color = '#fff';
+                    messageDiv.innerText = result.message || 'Erro ao adicionar feedback!';
+                }
+
+                messageDiv.style.display = 'block';
+                loadFeedbacks();  // Carregar feedbacks após o envio
                 document.getElementById('feedback-form').reset();
+            } catch (error) {
+                const messageDiv = document.getElementById('message');
+                messageDiv.style.backgroundColor = '#e74c3c';
+                messageDiv.style.color = '#fff';
+                messageDiv.innerText = 'Erro ao se comunicar com o servidor!';
+                messageDiv.style.display = 'block';
             }
         });
 
